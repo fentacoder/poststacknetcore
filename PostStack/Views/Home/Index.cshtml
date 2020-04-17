@@ -1,0 +1,84 @@
+﻿@model IEnumerable<PostValidation>
+@{
+    ViewData["Title"] = "Home Page";
+
+    bool dropDown = false;
+}
+
+<!--dropdown list-->
+<div style="background: transparent; padding: 10px; position: fixed; top: 1vh; right: 1vh; border: #fff 1px solid; border-radius: 5px; width: 40vh; z-index: 2;">
+    <button style="background: transparent; color: white; padding: 10px;" onclick="(() => {
+        if (@dropDown) {
+            @dropDown = false;
+        } else {
+            @dropDown = true;
+        }
+    })">
+        Settings
+    </button>
+    @if (dropDown)
+    {
+        <ul style="position: relative; top: 0; list-style: none; width: 30vh;">
+            <li style="width: 100%; background-color: white; padding: 10px;">
+                <a class="text-primary" style="cursor: pointer;" asp-controller="Home" asp-action="LogUserOut">Log out</a>
+            </li>
+        </ul>
+    }
+</div>
+
+<div class="row my-1">
+
+    <div class="container mb-1" style="width: 40%;">
+        <a class="btn btn-primary p-1" asp-controller="Home" asp-action="RedirectToAdd">Add Post</a>
+    </div>
+
+    <h1 class="col-sm-12 text-center text-primary">Posts</h1>
+</div>
+
+@if (Model != null)
+{
+    @if(Model.Count() > 0)
+    {
+        <!--each post gets rendered here-->
+        @for(int deleteIdx = 0; deleteIdx < Model.Count(); deleteIdx++)
+        {
+            <div class="container mt-1" style="box-shadow: 1px 1px 1px 1px #888">
+                <div class="container">
+                    <a class="btn btn-danger" style="z-index: 1; color: white; position: relative; top: 0; left: 0; overflow: hidden; border: red 1px solid; border-radius: 5px;"
+                       asp-controller="Home" asp-action="DeletePost" asp-route-id="@deleteIdx">
+                        &times;
+                    </a>
+                    <a class="btn btn-primary" style="z-index: 1; color: white; position: relative; top: 0; right: 0; overflow: hidden; border: red 1px solid; border-radius: 5px;"
+                       asp-controller="Home" asp-action="RedirectToDetails" asp-route-id="@deleteIdx">
+                        Edit
+                    </a>
+                    <h3 style="position: relative; top: 0; width: 100%; color: black; text-align: center;">@Model.ElementAt(deleteIdx).Title</h3>
+                </div>
+                <article style="color: lightgray;" class="my-1">@Model.ElementAt(deleteIdx).Body</article>
+            </div>
+        }
+
+        <!--pagination-->
+        <nav class="container" style="position: fixed; bottom: 5vh;">
+            <ul class="pagination">
+                @for (int i = 0; i < Model.First().PageCount; i++)
+                {
+                    @if (i == Model.First().IdxInList)
+                    {
+                        <li class="p-1" style="background-color: white; color: blue; cursor: pointer;">
+                            <a asp-controller="Home" asp-action="ChangePage"
+                               asp-route-id="@i">@i + 1</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="p-1 bg-primary" style="color: white; cursor: pointer;">
+                            <a asp-controller="Home" asp-action="ChangePage"
+                               asp-route-id="@i">@i + 1</a>
+                        </li>
+                    }
+                }
+            </ul>
+        </nav>
+    }
+}

@@ -1,0 +1,6 @@
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDatabase\bin\Debug\PostStackDatabase.dacpac
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDatabase\bin\Debug\PostStackDatabase.dll
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDatabase\bin\Debug\PostStackDatabase.pdb
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDatabase\obj\Debug\PostStackDatabase.sqlprojAssemblyReference.cache
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDatabase\obj\Debug\PostStackDatabase.dll
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDatabase\obj\Debug\PostStackDatabase.pdb

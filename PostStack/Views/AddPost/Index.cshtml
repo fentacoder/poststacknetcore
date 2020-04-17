@@ -1,0 +1,33 @@
+﻿@model PostValidation
+@{
+    ViewData["Title"] = "Add Post";
+    int userId = Model.UserId;
+}
+
+@if(userId != -1)
+{
+    <div class="row my-1">
+        <h1 class="col-sm-12 text-center">Add Post</h1>
+    </div>
+    <div class="container">
+        <div class="container" style="width: 60%;">
+            <form asp-action="Index" method="post">
+                <div asp-validation-summary="ModelOnly"></div>
+
+                <div class="form-group mt-1">
+                    <label asp-for="Title">Title:</label>
+                    <input type="text" asp-for="Title" placeholder="Title" class="form-control" />
+                    <span class="form-control" asp-validation-for="Title"></span>
+                </div>
+
+                <div class="form-group mt-1">
+                    <label asp-for="Body">Body:</label>
+                    <input type="text" asp-for="Body" placeholder="Title" class="form-control" />
+                    <span class="form-control" asp-validation-for="Body"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-1" asp-controller="Home" asp-action="Index" asp-route-id="@userId">Cancel</button>
+            </form>
+        </div>
+    </div>
+}

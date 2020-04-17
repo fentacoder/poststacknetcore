@@ -1,0 +1,9 @@
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDataAcessLibrary\bin\Debug\netcoreapp3.1\PostStackDataAccessLibrary.deps.json
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDataAcessLibrary\bin\Debug\netcoreapp3.1\PostStackDataAccessLibrary.dll
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDataAcessLibrary\bin\Debug\netcoreapp3.1\PostStackDataAccessLibrary.pdb
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDataAcessLibrary\obj\Debug\netcoreapp3.1\PostStackDataAccessLibrary.csprojAssemblyReference.cache
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDataAcessLibrary\obj\Debug\netcoreapp3.1\PostStackDataAccessLibrary.AssemblyInfoInputs.cache
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDataAcessLibrary\obj\Debug\netcoreapp3.1\PostStackDataAccessLibrary.AssemblyInfo.cs
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDataAcessLibrary\obj\Debug\netcoreapp3.1\PostStackDataAccessLibrary.dll
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDataAcessLibrary\obj\Debug\netcoreapp3.1\PostStackDataAccessLibrary.pdb
+C:\Users\madja\Documents\Visual Studio Projects\PostStackDataAcessLibrary\obj\Debug\netcoreapp3.1\PostStackDataAccessLibrary.csproj.CoreCompileInputs.cache
