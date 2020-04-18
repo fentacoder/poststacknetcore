@@ -36,7 +36,17 @@ namespace PostStack.Controllers
             _httpClass = new HttpClass(configuration);
         }
 
-        public IActionResult Index(int userId = -1)
+        /*
+         * 
+         * 
+         * 
+         * 
+         * dont forget to change userId back to -1
+         * 
+         * 
+         * 
+         */
+        public IActionResult Index(int userId = 7)
         {
             //if the user came from another controller
             if(userId != -1)
@@ -44,22 +54,22 @@ namespace PostStack.Controllers
                 _user.Id = userId;
             }
 
-            //if user is logged in
-            if(_user.Id != -1)
-            {
-                if (!_postsLoaded)
-                {
-                    InitializePosts();
-                }
-                else
-                {
-                    _postsLoaded = false;
-                }
-            }
-            else
-            {
-                return RedirectToAction("LoginUser", "Login");
-            }
+            ////if user is logged in
+            //if(_user.Id != -1)
+            //{
+            //    if (!_postsLoaded)
+            //    {
+            //        InitializePosts();
+            //    }
+            //    else
+            //    {
+            //        _postsLoaded = false;
+            //    }
+            //}
+            //else
+            //{
+            //    return RedirectToAction("LoginUser", "Login");
+            //}
 
             return View(_postList);
         }

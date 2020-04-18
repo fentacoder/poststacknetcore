@@ -1,35 +1,27 @@
 ﻿@model IEnumerable<PostValidation>
 @{
     ViewData["Title"] = "Home Page";
-
-    bool dropDown = false;
 }
 
 <!--dropdown list-->
-<div style="background: transparent; padding: 10px; position: fixed; top: 1vh; right: 1vh; border: #fff 1px solid; border-radius: 5px; width: 40vh; z-index: 2;">
-    <button style="background: transparent; color: white; padding: 10px;" onclick="(() => {
-        if (@dropDown) {
-            @dropDown = false;
-        } else {
-            @dropDown = true;
-        }
-    })">
+<div style="background: aqua; padding-bottom: 1vh; position: fixed; top: 1vh; right: 3vh; border: aqua 1px solid; border-radius: 5px; width: 20vh; height: 5vh; z-index: 3;">
+    <button id="nav-dropdown-btn" style="background: aqua; border: none; color: white; padding: 10px; z-index: 3; cursor: pointer; margin: 0 auto; width: 100%; height: 5vh; text-align: center;">
         Settings
     </button>
-    @if (dropDown)
-    {
-        <ul style="position: relative; top: 0; list-style: none; width: 30vh;">
-            <li style="width: 100%; background-color: white; padding: 10px;">
-                <a class="text-primary" style="cursor: pointer;" asp-controller="Home" asp-action="LogUserOut">Log out</a>
-            </li>
-        </ul>
-    }
+
+    <ul id="nav-dropdown" style="position: relative; top: 0; list-style: none; width: 100%; text-align: center; background: aqua;
+        border: aqua 1px solid; border-radius: 5px; padding: 5px; visibility: hidden;">
+        <li style="width: 100%; background-color: aqua; border: none; padding: 10px;">
+            <a class="text-white" style="cursor: pointer;" asp-controller="Home" asp-action="LogUserOut">Log out</a>
+        </li>
+    </ul>
+    
 </div>
 
 <div class="row my-1">
 
-    <div class="container mb-1" style="width: 40%;">
-        <a class="btn btn-primary p-1" asp-controller="Home" asp-action="RedirectToAdd">Add Post</a>
+    <div class="container mb-1 justify-content-center" style="width: 40%;">
+        <a class="btn btn-primary btn-block p-1" asp-controller="Home" asp-action="RedirectToAdd">Add Post</a>
     </div>
 
     <h1 class="col-sm-12 text-center text-primary">Posts</h1>
@@ -80,5 +72,7 @@
                 }
             </ul>
         </nav>
+
+        
     }
 }
