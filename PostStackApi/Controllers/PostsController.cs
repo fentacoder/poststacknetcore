@@ -43,9 +43,9 @@ namespace PostStackApi.Controllers
 
             int userId = int.Parse(tempPost["UserId"]);
 
-            DateTime createdAt = DateTime.Parse(tempPost["CreatedAt"]);
+            int postId = int.Parse(tempPost["PostId"]);
 
-            bool result = post.DeletePost(_configuration.GetConnectionString("DefaultConnection"), userId, createdAt);
+            bool result = post.DeletePost(_configuration.GetConnectionString("DefaultConnection"), userId, postId);
 
             if (!result)
             {
@@ -85,7 +85,7 @@ namespace PostStackApi.Controllers
             Post post = new Post();
 
             bool success = post.UpdatePost(_configuration.GetConnectionString("DefaultConnection"),
-                tempPost.UserId, tempPost.CreatedAt, tempPost.Title, tempPost.Body);
+                tempPost.UserId, tempPost.Id, tempPost.Title, tempPost.Body);
 
             if (!success)
             {

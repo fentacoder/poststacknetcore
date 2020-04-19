@@ -8,7 +8,7 @@ namespace PostStackDataAccessLibrary.DbModels
 {
     public class Post
     {
-
+        public int Id { get; set; }
         public int UserId { get; set; }
 
         public string Title { get; set; }
@@ -47,6 +47,7 @@ namespace PostStackDataAccessLibrary.DbModels
 
                                 while (reader.Read())
                                 {
+                                    int postId = int.Parse(reader["Id"].ToString());
                                     int postUserId = int.Parse(reader["UserId"].ToString());
                                     string title = reader["Title"].ToString();
                                     string body = reader["Body"].ToString();
@@ -55,6 +56,7 @@ namespace PostStackDataAccessLibrary.DbModels
 
                                     postList.Add(new Post
                                     {
+                                        Id = postId,
                                         UserId = postUserId,
                                         Title = title,
                                         Body = body,
@@ -102,7 +104,7 @@ namespace PostStackDataAccessLibrary.DbModels
 
                             addCmd.Connection = conn;
                             addCmd.Transaction = transaction;
-                            addCmd.CommandText = "INSERT INTO dbo.Posts VALUES (@Id, @Title, @Body, @CreatedAt, @UpdatedAt";
+                            addCmd.CommandText = "INSERT INTO dbo.Posts VALUES (@Id, @Title, @Body, @CreatedAt, @UpdatedAt)";
                             addCmd.Parameters.Add(new SqlParameter("@Id",userId));
                             addCmd.Parameters.Add(new SqlParameter("@Title",title));
                             addCmd.Parameters.Add(new SqlParameter("@Body",body));
@@ -133,7 +135,7 @@ namespace PostStackDataAccessLibrary.DbModels
             }
         }
 
-        public bool UpdatePost(string connectionStr, int userId, DateTime createdAt, string title, string body)
+        public bool UpdatePost(string connectionStr, int userId, int postId, string title, string body)
         {
             using (DbConnection conn = new SqlConnection(connectionStr))
             {
@@ -149,12 +151,12 @@ namespace PostStackDataAccessLibrary.DbModels
 
                             updateCmd.Connection = conn;
                             updateCmd.Transaction = transaction;
-                            updateCmd.CommandText = "UPDATE dbo.Posts SET Title = @Title, Body = @Body, UpdatedAt = @UpdatedAt WHERE UserId = @Id AND CreatedAt = @CreatedAt";
+                            updateCmd.CommandText = "UPDATE dbo.Posts SET Title = @Title, Body = @Body, UpdatedAt = @UpdatedAt WHERE UserId = @UserIdParam AND Id = @PostId";
                             updateCmd.Parameters.Add(new SqlParameter("@Title", title));
                             updateCmd.Parameters.Add(new SqlParameter("@Body", body));
                             updateCmd.Parameters.Add(new SqlParameter("@UpdatedAt", currentTime));
-                            updateCmd.Parameters.Add(new SqlParameter("@Id", userId));
-                            updateCmd.Parameters.Add(new SqlParameter("@CreatedAt", createdAt));
+                            updateCmd.Parameters.Add(new SqlParameter("@UserIdParam", userId));
+                            updateCmd.Parameters.Add(new SqlParameter("@PostId", postId));
 
                             updateCmd.ExecuteNonQuery();
                             transaction.Commit();
@@ -180,7 +182,7 @@ namespace PostStackDataAccessLibrary.DbModels
             }
         }
 
-        public bool DeletePost(string connectionStr, int userId, DateTime createdAt)
+        public bool DeletePost(string connectionStr, int userId, int postId)
         {
             using (DbConnection conn = new SqlConnection(connectionStr))
             {
@@ -195,9 +197,9 @@ namespace PostStackDataAccessLibrary.DbModels
 
                             deleteCmd.Connection = conn;
                             deleteCmd.Transaction = transaction;
-                            deleteCmd.CommandText = "DELETE FROM dbo.Posts WHERE UserId = @Id AND CreatedAt = @PostCreatedAt";
-                            deleteCmd.Parameters.Add(new SqlParameter("@Id",userId));
-                            deleteCmd.Parameters.Add(new SqlParameter("@PostCreatedAt",createdAt));
+                            deleteCmd.CommandText = "DELETE FROM dbo.Posts WHERE UserId = @UserIdParam AND Id = @PostId";
+                            deleteCmd.Parameters.Add(new SqlParameter("@UserIdParam", userId));
+                            deleteCmd.Parameters.Add(new SqlParameter("@PostId",postId));
 
                             deleteCmd.ExecuteNonQuery();
                             transaction.Commit();

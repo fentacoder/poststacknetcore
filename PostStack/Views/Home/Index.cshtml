@@ -4,14 +4,14 @@
 }
 
 <!--dropdown list-->
-<div style="background: aqua; padding-bottom: 1vh; position: fixed; top: 1vh; right: 3vh; border: aqua 1px solid; border-radius: 5px; width: 20vh; height: 5vh; z-index: 3;">
-    <button id="nav-dropdown-btn" style="background: aqua; border: none; color: white; padding: 10px; z-index: 3; cursor: pointer; margin: 0 auto; width: 100%; height: 5vh; text-align: center;">
+<div style="background: none; padding-bottom: 1vh; position: fixed; top: 1vh; right: 3vh; border: none; width: 20vh; height: 5vh; z-index: 3;">
+    <button id="nav-dropdown-btn" style="background: transparent; border: none; color: black; padding: 10px; z-index: 3; cursor: pointer; margin: 0 auto; width: 100%; height: 5vh; text-align: center;">
         Settings
     </button>
 
-    <ul id="nav-dropdown" style="position: relative; top: 0; list-style: none; width: 100%; text-align: center; background: aqua;
-        border: aqua 1px solid; border-radius: 5px; padding: 5px; visibility: hidden;">
-        <li style="width: 100%; background-color: aqua; border: none; padding: 10px;">
+    <ul id="nav-dropdown" style="position: relative; top: 0; list-style: none; width: 100%; text-align: center; background: #525453;
+        border: #525453 1px solid; border-radius: 5px; padding: 5px; visibility: hidden;">
+        <li style="width: 100%; background-color: #525453; border: none; padding: 10px;">
             <a class="text-white" style="cursor: pointer;" asp-controller="Home" asp-action="LogUserOut">Log out</a>
         </li>
     </ul>
@@ -34,39 +34,42 @@
         <!--each post gets rendered here-->
         @for(int deleteIdx = 0; deleteIdx < Model.Count(); deleteIdx++)
         {
-            <div class="container mt-1" style="box-shadow: 1px 1px 1px 1px #888">
-                <div class="container">
-                    <a class="btn btn-danger" style="z-index: 1; color: white; position: relative; top: 0; left: 0; overflow: hidden; border: red 1px solid; border-radius: 5px;"
-                       asp-controller="Home" asp-action="DeletePost" asp-route-id="@deleteIdx">
+            <div class="container mt-3" style="box-shadow: 1px 1px 1px 1px #888; border: none; border-radius: 5px; padding: 0;">
+                
+                <div style="width: 100%; margin: 0; padding: 0; background: aqua; border: none; border-radius: 5px 5px 0 0; overflow: hidden; display: flex;">
+                    <a class="btn btn-danger" style="z-index: 1; color: white; position: relative; top: 0; left: 0; overflow: hidden; border: none; border-radius: 5px; width: 10%; margin: 0;"
+                        asp-controller="Home" asp-action="DeletePost" asp-route-deleteIdx="@deleteIdx">
                         &times;
                     </a>
-                    <a class="btn btn-primary" style="z-index: 1; color: white; position: relative; top: 0; right: 0; overflow: hidden; border: red 1px solid; border-radius: 5px;"
-                       asp-controller="Home" asp-action="RedirectToDetails" asp-route-id="@deleteIdx">
+                    <h3 style="position: relative; top: 0; width: 80%; color: black; text-align: center; margin: 0;">@Model.ElementAt(deleteIdx).Title</h3>
+                    <a class="btn btn-primary" style="z-index: 1; width: 10%; color: white; position: relative; top: 0; right: 0; overflow: hidden; border: none; border-radius: 5px; margin: 0;"
+                        asp-controller="Home" asp-action="RedirectToDetails" asp-route-i="@deleteIdx">
                         Edit
                     </a>
-                    <h3 style="position: relative; top: 0; width: 100%; color: black; text-align: center;">@Model.ElementAt(deleteIdx).Title</h3>
                 </div>
-                <article style="color: lightgray;" class="my-1">@Model.ElementAt(deleteIdx).Body</article>
+                    
+                    
+                <article style="color: black; width: 100%; text-align: center;" class="my-1">@Model.ElementAt(deleteIdx).Body</article>
             </div>
         }
 
         <!--pagination-->
-        <nav class="container" style="position: fixed; bottom: 5vh;">
-            <ul class="pagination">
+        <nav class="container" style="position: fixed; bottom: 10vh; width: 100%;">
+            <ul style="display: flex; width: 100%; justify-content: center;">
                 @for (int i = 0; i < Model.First().PageCount; i++)
                 {
                     @if (i == Model.First().IdxInList)
                     {
-                        <li class="p-1" style="background-color: white; color: blue; cursor: pointer;">
+                        <li class="p-1" style="background-color: white; color: blue; cursor: pointer; margin: 0;">
                             <a asp-controller="Home" asp-action="ChangePage"
-                               asp-route-id="@i">@i + 1</a>
+                               asp-route-i="@(i + 1)">@(i + 1)</a>
                         </li>
                     }
                     else
                     {
-                        <li class="p-1 bg-primary" style="color: white; cursor: pointer;">
+                        <li class="p-1 bg-primary" style="color: white; cursor: pointer; margin: 0;">
                             <a asp-controller="Home" asp-action="ChangePage"
-                               asp-route-id="@i">@i + 1</a>
+                               asp-route-i="@(i + 1)">@(i + 1)</a>
                         </li>
                     }
                 }

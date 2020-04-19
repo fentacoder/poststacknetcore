@@ -8,7 +8,7 @@ namespace PostStack.Models
 {
     public class PostValidation
     {
-
+        public int Id { get; set; }
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "Please enter a title for your post")]

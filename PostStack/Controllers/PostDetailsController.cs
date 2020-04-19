@@ -19,35 +19,34 @@ namespace PostStack.Controllers
         private IConfiguration _configuration;
         private PostValidation _post = new PostValidation();
         private int _userId = -1;
+        private IHomePageHelper _homePageHelper;
 
-        public PostDetailsController(IConfiguration configuration)
+        public PostDetailsController(IConfiguration configuration, IHomePageHelper homePageHelper)
         {
             _configuration = configuration;
             _httpClass = new HttpClass(configuration);
+            _homePageHelper = homePageHelper;
         }
 
-        public IActionResult Index(int userId, string title, string body, DateTime createdAt)
+        public IActionResult Index(int id,int userId, string title, string body, DateTime createdAt)
         {
 
-            if(_userId != -1)
+            
+            if (userId != -1)
             {
-                return View(_post);
+                _userId = userId;
+                _post.Id = id;
+                _homePageHelper.SelectedPostId = id;
+                _post.UserId = userId;
+                _post.Title = title;
+                _post.Body = body;
+                _post.CreatedAt = createdAt;
             }
             else
             {
-                if (userId != -1)
-                {
-                    _userId = userId;
-                    _post.UserId = userId;
-                    _post.Title = title;
-                    _post.Body = body;
-                    _post.CreatedAt = createdAt;
-                }
-                else
-                {
-                    return RedirectToAction("LoginUser", "Login");
-                }
+                return RedirectToAction("LoginUser", "Login");
             }
+            
             
 
             return View(_post);
@@ -58,10 +57,10 @@ namespace PostStack.Controllers
         public async Task<IActionResult> Index([Bind("Title,Body")] PostValidation post)
         {
 
-            if (!string.IsNullOrWhiteSpace(post.Title) && !string.IsNullOrWhiteSpace(post.Body))
+            if (ModelState.IsValid)
             {
-                post.UserId = _userId;
-                post.CreatedAt = _post.CreatedAt;
+                post.UserId = _homePageHelper.UserId;
+                post.Id = _homePageHelper.SelectedPostId;
 
                 var json = JsonSerializer.Serialize(post);
 
@@ -74,13 +73,20 @@ namespace PostStack.Controllers
                     else
                     {
                         Console.WriteLine(response.ReasonPhrase);
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", "PostDetails", new
+                        {
+                            id = post.Id,
+                            userId = _homePageHelper.UserId,
+                            title = post.Title,
+                            body = post.Body,
+                            createdAt = post.CreatedAt
+                        });
                     }
                 }
             }
             else
             {
-                return RedirectToAction("Index");
+                return View(post);
             }
 
         }

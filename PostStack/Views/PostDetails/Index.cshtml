@@ -1,10 +1,15 @@
 ﻿@model PostValidation
 @{
     ViewData["Title"] = "Update Post";
-    int userId = Model.UserId;
+    int userId = -1;
+
+    if (Model != null)
+    {
+        userId = Model.UserId;
+    }
 }
 
-@if(userId != -1)
+@if (userId != -1)
 {
     <div class="row">
         <h1 class="col-sm-12 text-center">Update Post</h1>
@@ -12,22 +17,26 @@
 
     <div class="container">
         <div class="container">
-            <form asp-action="MakeChanges" method="post">
+            <form asp-action="Index" method="post">
                 <div asp-validation-summary="ModelOnly"></div>
+
+                <input type="hidden" asp-for="UserId" value="@userId"/>
 
                 <div class="form-group mt-1">
                     <label asp-for="Title">Title:</label>
                     <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger text-center" style="width: 100%;"></span>
                 </div>
 
                 <div class="form-group mt-1">
                     <label asp-for="Body">Body:</label>
                     <input asp-for="Body" class="form-control" />
+                    <span asp-validation-for="Body" class="text-danger text-center" style="width: 100%;"></span>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block my-1">Save</button>
             </form>
         </div>
-        <a class="btn btn-danger mt-1" asp-controller="Home" asp-action="Index" asp-route-id="@userId">Cancel</a>
+        <a class="btn btn-danger btn-block mt-1" asp-controller="Home" asp-action="Index" asp-route-id="@userId">Cancel</a>
     </div>
 }

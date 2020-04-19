@@ -16,62 +16,45 @@ namespace PostStack.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        private int _postCount = 0;
-        private int _pageCount = 0;
-        private int _pageIndex = 1;
-        private bool _postsLoaded = false;
-
-        private List<PostValidation> _postList;
-        private Dictionary<int, List<PostValidation>> _paginationMap = new Dictionary<int, List<PostValidation>>();
-        private PostValidation _post = new PostValidation();
-        private UserValidation _user = new UserValidation();
+        
         private HttpClass _httpClass;
         private IConfiguration _configuration;
+        private IHomePageHelper _homePageHelper;
 
-        public HomeController(ILogger<HomeController> logger,IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger,IConfiguration configuration, IHomePageHelper homePageHelper)
         {
             _logger = logger;
             _configuration = configuration;
             _httpClass = new HttpClass(configuration);
+            _homePageHelper = homePageHelper;
         }
 
-        /*
-         * 
-         * 
-         * 
-         * 
-         * dont forget to change userId back to -1
-         * 
-         * 
-         * 
-         */
-        public IActionResult Index(int userId = 7)
+        public async Task<IActionResult> Index(int userId = -1)
         {
             //if the user came from another controller
             if(userId != -1)
             {
-                _user.Id = userId;
+                _homePageHelper.UserId = userId;
             }
 
-            ////if user is logged in
-            //if(_user.Id != -1)
-            //{
-            //    if (!_postsLoaded)
-            //    {
-            //        InitializePosts();
-            //    }
-            //    else
-            //    {
-            //        _postsLoaded = false;
-            //    }
-            //}
-            //else
-            //{
-            //    return RedirectToAction("LoginUser", "Login");
-            //}
+            //if user is logged in
+            if (_homePageHelper.UserId != -1)
+            {
+                if (!_homePageHelper.PostsLoaded)
+                {
+                    bool success = await _homePageHelper.InitializePosts();
+                }
+                else
+                {
+                    _homePageHelper.PostsLoaded = false;
+                }
+            }
+            else
+            {
+                return RedirectToAction("LoginUser", "Login");
+            }
 
-            return View(_postList);
+            return View(_homePageHelper.PostList);
         }
 
         public IActionResult Privacy()
@@ -84,15 +67,16 @@ namespace PostStack.Controllers
             //the user deleted a post
             if(deleteIdx != -1)
             {
-                _postList.RemoveAt(deleteIdx);
-                InitializePosts(_postList);
-                _postsLoaded = true;
-
+                
                 var values = new Dictionary<string, string>
                 {
-                    {"UserId", _user.Id.ToString() },
-                    {"CreatedAt", _postList[deleteIdx].CreatedAt.ToString() }
+                    {"UserId", _homePageHelper.UserId.ToString() },
+                    {"PostId", _homePageHelper.PostList[deleteIdx].Id.ToString() }
                 };
+
+                _homePageHelper.PostList.RemoveAt(deleteIdx);
+                bool success = await _homePageHelper.InitializePosts(_homePageHelper.PostList);
+                _homePageHelper.PostsLoaded = true;
 
                 var json = JsonSerializer.Serialize(values);
 
@@ -117,10 +101,10 @@ namespace PostStack.Controllers
             //sets the index that the user wants to go to
             if(i != 0)
             {
-                _postList = _paginationMap[i];
-                _pageIndex = i;
+                _homePageHelper.PostList = _homePageHelper.PaginationMap[i];
+                _homePageHelper.PageIndex = i;
 
-                FormatPostList();
+                _homePageHelper.FormatPostList();
             }
 
             return RedirectToAction("Index");
@@ -133,145 +117,24 @@ namespace PostStack.Controllers
 
         public IActionResult RedirectToAdd()
         {
-            return RedirectToAction("Index", "AddPost", new { userId = _user.Id });
+            Console.WriteLine(_homePageHelper.UserId);
+
+            return RedirectToAction("Index", "AddPost", new { userId = _homePageHelper.UserId });
         }
 
         public IActionResult RedirectToDetails(int deleteIdx)
         {
-            PostValidation newPost = _postList[deleteIdx];
+            PostValidation newPost = _homePageHelper.PostList[deleteIdx];
 
             return RedirectToAction("Index", "PostDetails", new
             {
-                userId = _user.Id,
+                id = newPost.Id,
+                userId = _homePageHelper.UserId,
                 title = newPost.Title,
                 body = newPost.Body,
                 createdAt = newPost.CreatedAt
             });
         }
-
-        private async void InitializePosts(List<PostValidation> initialList = null)
-        {
-            if (initialList == null)
-            {
-                _paginationMap.Clear();
-
-                //grab list of posts from the api
-
-                using (HttpResponseMessage response = await _httpClass.ApiClient.GetAsync($"api/posts/{_user.Id}"))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string tempStr = await response.Content.ReadAsStringAsync();
-
-                        List<PostValidation> tempList = JsonSerializer.Deserialize<List<PostValidation>>(tempStr);
-
-                        if (tempList.Count() > 0)
-                        {
-                            _postCount = tempList.Count();
-                            _postList = tempList;
-
-                            //puts values in the dictionary for pagination
-
-                            int mapCounter = 1;
-                            int tempCounter = 1;
-                            List<PostValidation> placeHolderList = new List<PostValidation>();
-
-                            for (int i = 0; i < tempList.Count(); i++)
-                            {
-                                if (tempCounter == 11)
-                                {
-                                    _paginationMap.Add(mapCounter, placeHolderList);
-                                    mapCounter++;
-                                    tempCounter = 1;
-                                    placeHolderList.Clear();
-                                }
-                                else if (i == tempList.Count() - 1)
-                                {
-                                    _paginationMap.Add(mapCounter, placeHolderList);
-                                    tempCounter = 1;
-                                    placeHolderList.Clear();
-                                }
-                                else
-                                {
-                                    placeHolderList.Add(tempList[i]);
-                                    tempCounter++;
-                                }
-                            }
-
-                            //set the pagecount
-                            _pageCount = mapCounter;
-                        }
-                    }
-                    else
-                    {
-
-                        Console.WriteLine(response.ReasonPhrase);
-
-                    }
-                }
-            }
-            else
-            {
-                if (initialList.Count() > 0)
-                {
-                    _paginationMap.Clear();
-                    _postCount = initialList.Count();
-
-                    //puts values in the dictionary for pagination
-
-                    int mapCounter = 1;
-                    int tempCounter = 1;
-                    List<PostValidation> placeHolderList = new List<PostValidation>();
-
-                    for (int i = 0; i < initialList.Count(); i++)
-                    {
-                        if (tempCounter == 11)
-                        {
-                            _paginationMap.Add(mapCounter, placeHolderList);
-                            mapCounter++;
-                            tempCounter = 1;
-                            placeHolderList.Clear();
-                        }
-                        else if (i == initialList.Count() - 1)
-                        {
-                            _paginationMap.Add(mapCounter, placeHolderList);
-                            tempCounter = 1;
-                            placeHolderList.Clear();
-                        }
-                        else
-                        {
-                            placeHolderList.Add(initialList[i]);
-                            tempCounter++;
-                        }
-                    }
-
-                    //set the pagecount
-                    _pageCount = mapCounter;
-                }
-            }
-        }
-
-        private void FormatPostList()
-        {
-            List<PostValidation> tempList = new List<PostValidation>();
-
-            foreach(var post in _postList)
-            {
-                post.IdxInList = _pageIndex;
-                post.PageCount = _pageCount;
-                tempList.Add(post);
-            }
-
-            _postList = tempList;
-        }
-
-
-
-
-
-
-
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
